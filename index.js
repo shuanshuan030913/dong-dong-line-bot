@@ -1,5 +1,6 @@
 import { Client, middleware } from '@line/bot-sdk';
 import express from 'express';
+import constant from './constant';
 
 const lineConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '方便自己開發用的，不然已經設定好heroku condig var 是不用再另外assign的',
@@ -48,11 +49,7 @@ const handleEvent = (event) => {
     case 'message': //傳訊息給機器人
         switch (event.message.type) {
         case 'text':
-            textHandler(event.replyToken, event.message.text);   //測試code就不用這行
-//             return client.replyMessage(replyToken, {     ---->    測試用code通常就是呼叫client.replyMessage，並依api要求格式回傳
-//                 type: 'text',
-//                 text: event.message.text  ----> 我們傳給機器人的文字會在這裡面
-//             });
+            textHandler(event.replyToken, event.message.text);
             break;
         case 'sticker':
             // do sth with sticker
@@ -63,25 +60,16 @@ const handleEvent = (event) => {
 
 const textHandler = (replyToken, inputText) => {
     try{
-        let resText;
-        switch (inputText) {
-            case '你好':
-                resText = '你好啊';
+        const detectWords = Object.keys(constants.ACTIVE_TEXT);
+        for (let detectWord of detectWords) {
+            if (inputText.includes(detectWord)) {
+                client.replyMessage(replyToken, {
+                    type: 'text',
+                    text: constant.ACTIVE_TEXT[inputText],
+                });
                 break;
-            case 'test':
-                resText = `測試`;
-                break
-//             case 'Q&A':
-//                 return client.replyMessage(replyToken, imageMap());
-//             case 'q&a':
-//                 return client.replyMessage(replyToken, carousel());
-            default:
-                resText = '請親臨院所';
+            }
         }
-        return client.replyMessage(replyToken, {
-            type: 'text',
-            text: resText
-        });
     } catch (err) {
         console.log(err)
     }

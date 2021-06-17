@@ -1,6 +1,7 @@
 import { Client, middleware } from '@line/bot-sdk';
 import express from 'express';
 import constant from './constant';
+require('dotenv').config();
 
 const lineConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '方便自己開發用的，不然已經設定好heroku condig var 是不用再另外assign的',
@@ -60,15 +61,19 @@ const handleEvent = (event) => {
 
 const textHandler = (replyToken, inputText) => {
     try{
-        const detectWords = Object.keys(constants.ACTIVE_TEXT);
+        let responseText = '';
+        const detectWords = Object.keys(constant.ACTIVE_TEXT);
         for (let detectWord of detectWords) {
             if (inputText.includes(detectWord)) {
-                client.replyMessage(replyToken, {
-                    type: 'text',
-                    text: constant.ACTIVE_TEXT[inputText],
-                });
+                responseText = constant.ACTIVE_TEXT[detectWord];
                 break;
             }
+        }
+        if (responseText && responseText.length > 0) {
+            return client.replyMessage(replyToken, {
+                type: 'text',
+                text: responseText,
+            });
         }
     } catch (err) {
         console.log(err)

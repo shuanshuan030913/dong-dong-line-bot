@@ -21,6 +21,7 @@ app.post('/', middleware(lineConfig), async (req, res) => {
                     "source": {
                         "userId": "xxxx"",
                         "type": "user"
+                        "groupId":"000",
                     },
                     "timestamp": 1592813446208,
                     "mode": "active",
@@ -41,7 +42,7 @@ app.post('/', middleware(lineConfig), async (req, res) => {
     }
 });
 
-const handleEvent = (event) => {
+const handleEvent = async(event) => {
     switch (event.type) {
     case 'join': //這隻機器人加入別人的群組
         break;
@@ -50,18 +51,18 @@ const handleEvent = (event) => {
     case 'message': //傳訊息給機器人
         switch (event.message.type) {
         case 'text':
-            client.getProfile(event.source.userId)
-            .then((profile) => {
-                let result = {};
-                result.userName = profile.displayName;
-                return result;
-            })
-            .then(source => {
-                textHandler(event.replyToken, event.message.text, source);
-            })
-            .catch((err) => {
-                console.log('handleEvent err', err);
-            });
+            try {
+                const profile = await client.getGroupMemberProfile(event.source.groupId, event.source.userId);
+                const result = {
+                    groupId: event.source.groupId,
+                    userId: event.source.userId,
+                    userName: profile.displayName,
+                };
+                await textHandler(event.replyToken, event.message.text, result);
+            } catch(err) {
+                console.log('handleEvent err', err)
+            };
+
             break;
         case 'sticker':
             // do sth with sticker
@@ -70,7 +71,7 @@ const handleEvent = (event) => {
     }
 }
 
-const textHandler = (replyToken, inputText, source) => {
+const textHandler = async (replyToken, inputText, source) => {
     try{
         let responseText = '';
         const detectWords = Object.keys(constant.ACTIVE_TEXT);
@@ -86,8 +87,22 @@ const textHandler = (replyToken, inputText, source) => {
                 text: responseText,
             });
         }
+
+        let detectLeave = constant.LEAVE_TEXT.reduce((a, b) => a && inputText.includes(b), true);
+        if (detectLeave) {
+            await client.replyMessage(replyToken, [
+                {
+                    type: 'text',
+                    text: '青山不改 綠水長流 他日有緣再碰頭',
+                },{
+                    type: 'text',
+                    text: '掰啦',
+                }
+            ]);
+            await client.leaveGroup(source.groupId);
+        }
     } catch (err) {
-        console.log(err)
+        console.log('textHandler', err)
     }
 
 }

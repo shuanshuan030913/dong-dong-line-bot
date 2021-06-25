@@ -4,7 +4,7 @@ import constant from './constant';
 require('dotenv').config();
 
 const lineConfig = {
-    channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '方便自己開發用的，不然已經設定好heroku condig var 是不用再另外assign的',
+    channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '方便自己開發用的，不然已經設定好heroku config var 是不用再另外assign的',
     channelSecret: process.env.CHANNEL_SECRET || '同上'
 };
 
@@ -52,13 +52,21 @@ const handleEvent = async(event) => {
         switch (event.message.type) {
         case 'text':
             try {
-                const profile = await client.getGroupMemberProfile(event.source.groupId, event.source.userId);
                 const result = {
                     groupId: event.source.groupId,
                     userId: event.source.userId,
-                    userName: profile.displayName,
                 };
-                await textHandler(event.replyToken, event.message.text, result);
+                if (result.groupId) {
+                    const profile = await client.getGroupMemberProfile(event.source.groupId, event.source.userId);
+                    result.userName = profile.displayName;
+                }
+                const re = /https?:\/\//g;
+                const checkWebsite = event.message.text.match(re);
+                if (!checkWebsite) {
+                    await textHandler(event.replyToken, event.message.text, result);
+                } else {
+                    console.log('checkWebsite')
+                }
             } catch(err) {
                 console.log('handleEvent err', err)
             };
@@ -77,7 +85,7 @@ const textHandler = async (replyToken, inputText, source) => {
         const detectWords = Object.keys(constant.ACTIVE_TEXT);
         for (let detectWord of detectWords) {
             if (inputText.includes(detectWord)) {
-                responseText = `回復${source.userName}：${constant.ACTIVE_TEXT[detectWord]} `;
+                responseText = `${source.userName ? ('回復' + source.userName + '： ') : ''}${constant.ACTIVE_TEXT[detectWord]} `;
                 break;
             }
         }

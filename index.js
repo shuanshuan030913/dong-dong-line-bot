@@ -1,7 +1,10 @@
+'use strict'
+
 import { Client, middleware } from '@line/bot-sdk';
 import express from 'express';
 import constant from './constant';
 require('dotenv').config();
+import { getData, setData } from './sheet'
 
 const lineConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '方便自己開發用的，不然已經設定好heroku config var 是不用再另外assign的',
@@ -81,6 +84,10 @@ const handleEvent = async(event) => {
 
 const textHandler = async (replyToken, inputText, source) => {
     try{
+        // google sheet
+        source.userName ? await setData(constant.DOC_ID, constant.SHEET_ID) : null;
+
+
         let responseText = '';
         const detectWords = Object.keys(constant.ACTIVE_TEXT);
         for (let detectWord of detectWords) {

@@ -1,4 +1,5 @@
 .env
+credentials.json
 
 # Dependency directories
 node_modules

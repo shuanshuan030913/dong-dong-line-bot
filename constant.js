@@ -1,6 +1,9 @@
 'use strict';
 
 export default {
+    DOC_ID: '1O66FNXYklb1Fac8mhgpQ6wjPYLAaryYb-OuUAzKceos',
+    SHEET_ID: '0',
+    credentialsPath: './credentials.json',
 	'ACTIVE_TEXT': {
         'test': '測試',
 		'你好': '你好啊',

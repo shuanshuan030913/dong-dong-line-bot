@@ -27,21 +27,27 @@ const replyImg = async({client, replyToken, inputText, source}) => {
     try{
         let responseImgs = [];
         const detectWords = Object.keys(constant.REPLY_IMG);
-        for (let detectWord of detectWords) {
-            if (inputText.includes(detectWord)) {
-                responseImgs.push("test");
-                break;
+
+        // 關鍵字 求
+        if (inputText.indexOf('求') === 0) {
+            const keyword = inputText.substring(2, inputText.length);
+            for (let detectWord of detectWords) {
+                if (keyword.toUpperCase() === detectWord.toUpperCase()) {
+                    responseImgs = [...constant.REPLY_IMG[detectWord]];
+                    break;
+                }
             }
         }
-        let tempURL = 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png';
+
         if (responseImgs && responseImgs.length > 0) {
-            return client.replyMessage(replyToken, {
-                type: 'image',
-                // originalContentUrl: constant.IMG_URL + "/images/tests.jpg",
-                // previewImageUrl: constant.IMG_URL + "/images/tests.jpg",
-                originalContentUrl: tempURL,
-                previewImageUrl: tempURL,
-            });
+            const replyFormat = responseImgs.map(img => {
+                return {
+                    type: 'image',
+                    originalContentUrl: constant.IMG_URL + img,
+                    previewImageUrl: constant.IMG_URL + img,
+                }
+            })
+            return client.replyMessage(replyToken, replyFormat);
         }
     } catch (err) {
         console.log('replyImg err: ', err);

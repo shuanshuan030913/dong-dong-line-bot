@@ -15,8 +15,14 @@ export default {
         '咚咚': '叫我嗎？',
 	},
 	'REPLY_IMG': {
-        'test': '測試',
+        'test': [
+            'test.png',
+        ],
+        'last dance': [
+            'last-dance.jpg',
+            'last-dance-2.jpg',
+        ],
 	},
-    'IMG_URL': '',
+    'IMG_URL': 'https://raw.githubusercontent.com/shuanshuan030913/dong-dong-line-bot/master/images/',
     'LEAVE_TEXT': '咚咚走',
 }

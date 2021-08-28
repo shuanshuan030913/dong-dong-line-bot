@@ -4,8 +4,7 @@ export default {
     DOC_ID: '1O66FNXYklb1Fac8mhgpQ6wjPYLAaryYb-OuUAzKceos',
     SHEET_ID: '0',
     credentialsPath: './credentials.json',
-	'ACTIVE_TEXT': {
-        'test': '測試',
+	'REPLY_TEXT': {
 		'你好': '你好啊',
         '好餓': '吃飯',
         '77': '88',
@@ -15,5 +14,9 @@ export default {
         'sad': '秀秀不哭',
         '咚咚': '叫我嗎？',
 	},
-    'LEAVE_TEXT': ['咚咚', '走開'],
+	'REPLY_IMG': {
+        'test': '測試',
+	},
+    'IMG_URL': '',
+    'LEAVE_TEXT': '咚咚走',
 }

@@ -2,9 +2,10 @@
 
 import { Client, middleware } from '@line/bot-sdk';
 import express from 'express';
-import constant from './constant';
 require('dotenv').config();
-import { getData, setData } from './sheet'
+import { getData, setData } from './sheet';
+import { leaveGroup } from './service/leaveGroup';
+import { replyText, replyImg } from './service/replyEvent';
 
 const lineConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '方便自己開發用的，不然已經設定好heroku config var 是不用再另外assign的',
@@ -59,13 +60,16 @@ const handleEvent = async(event) => {
                     groupId: event.source.groupId,
                     userId: event.source.userId,
                 };
+                // 取得群組資訊：使用者名稱
                 if (result.groupId) {
                     const profile = await client.getGroupMemberProfile(event.source.groupId, event.source.userId);
                     result.userName = profile.displayName;
                 }
                 const re = /https?:\/\//g;
                 const checkWebsite = event.message.text.match(re);
+                // 非網址列才偵測回應
                 if (!checkWebsite) {
+                    console.log(JSON.stringify(event.message));
                     await textHandler(event.replyToken, event.message.text, result);
                 } else {
                     console.log('checkWebsite')
@@ -84,38 +88,22 @@ const handleEvent = async(event) => {
 
 const textHandler = async (replyToken, inputText, source) => {
     try{
+        let isReplyed = false;
         // google sheet
-        source.userName ? await setData(constant.DOC_ID, constant.SHEET_ID) : null;
+        // source.userName ? await setData(constant.DOC_ID, constant.SHEET_ID) : null;
 
+        // 離開事件
+        isReplyed = await leaveGroup({client, replyToken, inputText, source});
+        if (isReplyed) return true;
 
-        let responseText = '';
-        const detectWords = Object.keys(constant.ACTIVE_TEXT);
-        for (let detectWord of detectWords) {
-            if (inputText.includes(detectWord)) {
-                responseText = `${source.userName ? ('回復' + source.userName + '： ') : ''}${constant.ACTIVE_TEXT[detectWord]} `;
-                break;
-            }
-        }
-        if (responseText && responseText.length > 0) {
-            return client.replyMessage(replyToken, {
-                type: 'text',
-                text: responseText,
-            });
-        }
+        // 文字回復
+        isReplyed = await replyText({client, replyToken, inputText, source});
+        if (isReplyed) return true;
 
-        let detectLeave = constant.LEAVE_TEXT.reduce((a, b) => a && inputText.includes(b), true);
-        if (detectLeave) {
-            await client.replyMessage(replyToken, [
-                {
-                    type: 'text',
-                    text: '青山不改 綠水長流 他日有緣再碰頭',
-                },{
-                    type: 'text',
-                    text: '掰啦',
-                }
-            ]);
-            await client.leaveGroup(source.groupId);
-        }
+        // 圖片回復
+        isReplyed = await replyImg({client, replyToken, inputText, source});
+        if (isReplyed) return true;
+
     } catch (err) {
         console.log('textHandler', err)
     }

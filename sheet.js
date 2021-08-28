@@ -30,7 +30,7 @@ const setData = async(docID, sheetID) => {
  */
 const getSheet = async(docID, sheetID) => {
     const doc = new GoogleSpreadsheet(docID);
-    const creds = require(constants.credentialsPath);
+    const creds = require(constant.credentialsPath);
     await doc.useServiceAccountAuth(creds);
     await doc.loadInfo();
     const sheet = doc.sheetsById[sheetID];

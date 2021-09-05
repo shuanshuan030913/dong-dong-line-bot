@@ -5,7 +5,7 @@ import express from 'express';
 require('dotenv').config();
 import { getData, setData } from './sheet';
 import { leaveGroup } from './service/leaveGroup';
-import { replyText, replyImg } from './service/replyEvent';
+import { replyText, replyImg, replyAllImgs } from './service/replyEvent';
 
 const lineConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '方便自己開發用的，不然已經設定好heroku config var 是不用再另外assign的',
@@ -90,19 +90,28 @@ const textHandler = async (replyToken, inputText, source) => {
     try{
         let isReplyed = false;
         // google sheet
-        // source.userName ? await setData(constant.DOC_ID, constant.SHEET_ID) : null;
+        // source.userName ? await setData(source) : null;
+        // return true;
 
         // 離開事件
         isReplyed = await leaveGroup({client, replyToken, inputText, source});
         if (isReplyed) return true;
 
+        // 圖片回復
+        // 查詢所有圖片
+        isReplyed = await replyAllImgs({client, replyToken, inputText, source});
+        if (isReplyed) return true;
+
+        // 關鍵字 #
+        if (inputText.indexOf('#') === 0) {
+            isReplyed = await replyImg({client, replyToken, inputText, source});
+            if (isReplyed) return true;
+        }
+
         // 文字回復
         isReplyed = await replyText({client, replyToken, inputText, source});
         if (isReplyed) return true;
 
-        // 圖片回復
-        isReplyed = await replyImg({client, replyToken, inputText, source});
-        if (isReplyed) return true;
 
     } catch (err) {
         console.log('textHandler', err)

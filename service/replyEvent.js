@@ -23,23 +23,41 @@ const replyText = async({client, replyToken, inputText, source}) => {
     }
 }
 
+const replyAllImgs = async({client, replyToken, inputText, source}) => {
+    try{
+        const detectWord = constant.GET_IMGS_TEXT;
+
+        if (detectWord === inputText) {
+            const detectWords = Object.keys(constant.REPLY_IMG);
+            let responseText = '所有的譜：\n' + detectWords.join('\n');
+            responseText += '\n\n#查詢樂譜，例：#google';
+            
+            return client.replyMessage(replyToken, {
+                type: 'text',
+                text: responseText,
+            });
+        }
+
+    } catch (err) {
+        console.log('replyAllImgs err: ', err);
+    }
+}
+
 const replyImg = async({client, replyToken, inputText, source}) => {
     try{
         let responseImgs = [];
         const detectWords = Object.keys(constant.REPLY_IMG);
 
-        // 關鍵字 求
-        if (inputText.indexOf('求') === 0) {
-            const keyword = inputText.substring(2, inputText.length);
-            for (let detectWord of detectWords) {
-                if (keyword.toUpperCase() === detectWord.toUpperCase()) {
-                    responseImgs = [...constant.REPLY_IMG[detectWord]];
-                    break;
-                }
+        const keyword = inputText.substring(1, inputText.length);
+        for (let detectWord of detectWords) {
+            if (keyword.toUpperCase() === detectWord.toUpperCase()) {
+                responseImgs = [...constant.REPLY_IMG[detectWord]];
+                break;
             }
         }
 
         if (responseImgs && responseImgs.length > 0) {
+            console.log('responseImgs', constant.IMG_URL + responseImgs[0])
             const replyFormat = responseImgs.map(img => {
                 return {
                     type: 'image',
@@ -55,4 +73,4 @@ const replyImg = async({client, replyToken, inputText, source}) => {
 }
 
 
-export {replyText, replyImg};
+export {replyText, replyAllImgs, replyImg};

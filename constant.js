@@ -5,17 +5,21 @@ export default {
     SHEET_ID: '0',
     credentialsPath: './credentials.json',
 	'REPLY_TEXT': {
-		'你好': '你好啊',
         '好餓': '吃飯',
         '77': '88',
         '87': '你才87 你全家都87',
         '八七': '你才87 你全家都87',
         '好你媽': '媽~鴨',
         'sad': '秀秀不哭',
+		'你好吵': 'QAQ',
+		'咚咚你好': '你好啊',
+        '咚咚咚咚': '好了夠了我來了',
+        '咚咚早安': '早安早安',
         '咚咚': '叫我嗎？',
 	},
+    'GET_IMGS_TEXT': '咚咚的譜',
 	'REPLY_IMG': {
-        'test': [
+        'google': [
             'test.png',
         ],
         'last dance': [
@@ -24,5 +28,6 @@ export default {
         ],
 	},
     'IMG_URL': 'https://raw.githubusercontent.com/shuanshuan030913/dong-dong-line-bot/master/images/',
-    'LEAVE_TEXT': '咚咚走',
+    'LEAVE_TEXT': '咚咚走開',
 }
+

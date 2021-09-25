@@ -23,8 +23,12 @@ export default {
             'test.png',
         ],
         'last dance': [
-            'last-dance.jpg',
+            'last-dance-1.jpg',
             'last-dance-2.jpg',
+        ],
+        '蘭花草': [
+            'orchid-1.jpg',
+            'orchid-2.jpg',
         ],
 	},
     'IMG_URL': 'https://raw.githubusercontent.com/shuanshuan030913/dong-dong-line-bot/master/images/',

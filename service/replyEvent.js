@@ -1,17 +1,20 @@
 'use strict'
 
 import constant from '../constant';
+import getSearchResult from "./getSearchResult";
 
 const replyText = async({client, replyToken, inputText, source}) => {
     try{
         let responseText = '';
+        responseText = getSearchResult(inputText);
+        /* 關鍵字偵測
         const detectWords = Object.keys(constant.REPLY_TEXT);
         for (let detectWord of detectWords) {
             if (inputText.includes(detectWord)) {
                 responseText = `${source.userName ? ('回復' + source.userName + '： ') : ''}${constant.REPLY_TEXT[detectWord]} `;
                 break;
             }
-        }
+        }*/
         if (responseText && responseText.length > 0) {
             return client.replyMessage(replyToken, {
                 type: 'text',

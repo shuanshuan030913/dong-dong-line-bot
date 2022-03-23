@@ -69,7 +69,7 @@ const handleEvent = async(event) => {
                 const checkWebsite = event.message.text.match(re);
                 // 非網址列才偵測回應
                 if (!checkWebsite) {
-                    console.log(JSON.stringify(event.message));
+                    // console.log(JSON.stringify(event.message));
                     await textHandler(event.replyToken, event.message.text, result);
                 } else {
                     console.log('checkWebsite')

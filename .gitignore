@@ -21,10 +21,10 @@ node_modules
 
 fixtures/*.json
 
-#test data
+#test farmData
 coverage
 
-#Mac data
+#Mac farmData
 .DS_Store
 
 package-lock.json

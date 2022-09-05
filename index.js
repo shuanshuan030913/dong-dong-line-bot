@@ -3,9 +3,8 @@
 import { Client, middleware } from '@line/bot-sdk';
 import express from 'express';
 require('dotenv').config();
-import { getData, setData } from './sheet';
 import { leaveGroup } from './service/leaveGroup';
-import { replyText, replyImg, replyAllImgs } from './service/replyEvent';
+import { replyText, replyQuestion, replyImg, replyAllImgs } from './service/replyEvent';
 
 const lineConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '方便自己開發用的，不然已經設定好heroku config var 是不用再另外assign的',
@@ -107,6 +106,10 @@ const textHandler = async (replyToken, inputText, source) => {
             isReplyed = await replyImg({client, replyToken, inputText, source});
             if (isReplyed) return true;
         }
+
+        // 連續問題
+        isReplyed = await replyQuestion({client, replyToken, inputText, source});
+        if (isReplyed) return true;
 
         // 文字回復
         isReplyed = await replyText({client, replyToken, inputText, source});

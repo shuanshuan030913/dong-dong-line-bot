@@ -2,7 +2,10 @@
 
 export default {
     DOC_ID: '1O66FNXYklb1Fac8mhgpQ6wjPYLAaryYb-OuUAzKceos',
-    SHEET_ID: '0',
+    SHEET_ID: {
+        default: '0',
+        questions: '1875370115',
+    },
     credentialsPath: './credentials.json',
 	'REPLY_TEXT': {
         '好餓': '吃飯',
@@ -21,6 +24,7 @@ export default {
         '咚咚早安': '早安早安',
         '咚咚': '叫我嗎？',
 	},
+    'GET_WORD': '咚咚背單字',
     'GET_IMGS_TEXT': '咚咚的譜',
 	'REPLY_IMG': {
         'google': [

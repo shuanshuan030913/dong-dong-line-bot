@@ -6,8 +6,11 @@ import constant from './constant';
 
 const getData = async () => {
   try{
-    const sheet = await getSheet();
+    const {SHEET_ID: {default: sheetID}} = constant;
+    const sheet = await getSheet(sheetID);
   
+    if (!sheet) return null;
+
     const result = [];
     const rows = await sheet.getRows();
     for (let row of rows) {
@@ -22,7 +25,11 @@ const getData = async () => {
 
 const setData = async (source) => {
   try{
-    const sheet = await getSheet();
+    const {SHEET_ID: {default: sheetID}} = constant;
+    const sheet = await getSheet(sheetID);
+
+    if (!sheet) return null;
+    
     await sheet.addRow([source.userName, dayjs().format('YYYY/MM/DD HH:mm:ss')]);
     return 200;
   } catch (err) {
@@ -33,9 +40,9 @@ const setData = async (source) => {
 /**
  * @param  {String} credentialsPath the credentials path default is './credentials.json'
  */
-const getSheet = async () => {
+const getSheet = async (sheetID) => {
   try{
-    const { DOC_ID: docID, SHEET_ID: sheetID } = constant;
+    const { DOC_ID: docID } = constant;
     // docID the document ID
     // sheetID the google sheet table ID
     const doc = new GoogleSpreadsheet(docID);
@@ -49,4 +56,4 @@ const getSheet = async () => {
   }
 };
 
-export { getData, setData };
+export { getData, setData, getSheet };

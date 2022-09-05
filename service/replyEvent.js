@@ -2,19 +2,45 @@
 
 import constant from '../constant';
 import getSearchResult from "./getSearchResult";
+import getQuestions from "./getQuestions";
 
 const replyText = async({client, replyToken, inputText, source}) => {
     try{
         let responseText = '';
-        responseText = getSearchResult(inputText);
-        /* 關鍵字偵測
+        // responseText = getSearchResult(inputText);
+        /* 關鍵字偵測 */
         const detectWords = Object.keys(constant.REPLY_TEXT);
         for (let detectWord of detectWords) {
             if (inputText.includes(detectWord)) {
                 responseText = `${source.userName ? ('回復' + source.userName + '： ') : ''}${constant.REPLY_TEXT[detectWord]} `;
                 break;
             }
-        }*/
+        }
+        if (responseText && responseText.length > 0) {
+            return client.replyMessage(replyToken, {
+                type: 'text',
+                text: responseText,
+            });
+        }
+    } catch (err) {
+        console.log('replyText err: ', err);
+    }
+}
+
+const replyQuestion = async({client, replyToken, inputText, source}) => {
+    try{
+        let responseText = '';
+        // responseText = getSearchResult(inputText);
+        /* 關鍵字偵測 */
+        if (inputText.includes(constant.GET_WORD)) {
+            const question = await getQuestions();
+            if (question) {
+                responseText = question;
+                // responseText = `${source.userName ? ('回復' + source.userName + '： ') : ''}${constant.REPLY_TEXT[detectWord]} `;
+            } else {
+                responseText = '找不到問題';
+            }
+        }
         if (responseText && responseText.length > 0) {
             return client.replyMessage(replyToken, {
                 type: 'text',
@@ -76,4 +102,4 @@ const replyImg = async({client, replyToken, inputText, source}) => {
 }
 
 
-export {replyText, replyAllImgs, replyImg};
+export {replyText, replyQuestion, replyAllImgs, replyImg};
